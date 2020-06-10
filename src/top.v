@@ -62,13 +62,13 @@ seg_decoder seg_decoder_m1(
     .seg_led  (seg_data_1)
 );
 wire[6:0] seg_data_2;
-wire[3:0] data_2 = 4'd6;
+wire[3:0] data_2 = 4'd0;
 seg_decoder seg_decoder_m2(
     .bin_data  (data_2),
     .seg_led  (seg_data_2)
 );
 wire[6:0] seg_data_3;
-wire[3:0] data_3 = 4'd3;
+wire[3:0] data_3 = 4'd6;
 seg_decoder seg_decoder_m3(
     .bin_data  (data_3),
     .seg_led  (seg_data_3)
