@@ -48,8 +48,6 @@ module top
 	output[1:0]                 sdram_dqm,              //sdram data enable 
 	output[1:0]                 sdram_ba,               //sdram bank address
 	output[12:0]                sdram_addr,             //sdram address
-	output[5:0]                 sel,                    //digital led chip select
-   output[7:0]                 seg_led,                //seven segments LED output
 	inout[15:0]                 sdram_dq                //sdram data
 );
 parameter MEM_DATA_BITS         = 16  ;                 //external memory user interface data width
@@ -77,57 +75,6 @@ wire                            write_req;
 wire                            write_req_ack;
 wire[9:0]                       lut_index;
 wire[31:0]                      lut_data;
-
-//segment decoder
-wire[6:0] seg_data_0;
-seg_decoder seg_decoder_m0(
-    .bin_data  (1'b0),
-    .seg_led  (seg_data_0)
-);
-wire[6:0] seg_data_1;
-seg_decoder seg_decoder_m1(
-    .bin_data  (1'b0),
-    .seg_led  (seg_data_1)
-);
-wire[6:0] seg_data_2;
-wire[3:0] data_2 = 4'd6;
-seg_decoder seg_decoder_m2(
-    .bin_data  (data_2),
-    .seg_led  (seg_data_2)
-);
-wire[6:0] seg_data_3;
-wire[3:0] data_3 = 4'd3;
-seg_decoder seg_decoder_m3(
-    .bin_data  (data_3),
-    .seg_led  (seg_data_3)
-);
-wire[6:0] seg_data_4;
-wire[3:0] data_4 = 4'hd;
-seg_decoder seg_decoder_m4(
-    .bin_data  (data_4),
-    .seg_led  (seg_data_4)
-);
-
-wire[6:0] seg_data_5;
-wire[3:0] data_5 = 4'hb;
-seg_decoder seg_decoder_m5(
-    .bin_data  (data_5),
-    .seg_led  (seg_data_5)
-);
-
-// segment scan
-seg_scan seg_scan_m0(
-    .clk        (clk),
-    .rst_n      (rst_n),
-    .sel    (sel),
-    .seg_led   (seg_led),
-    .seg_data_0 ({1'b1,seg_data_0}),      //The  decimal point at the highest bit,and low level effecitve
-    .seg_data_1 ({1'b1,seg_data_1}), 
-    .seg_data_2 ({1'b1,seg_data_2}),
-    .seg_data_3 ({1'b1,seg_data_3}),
-    .seg_data_4 ({1'b1,seg_data_4}),
-    .seg_data_5 ({1'b1,seg_data_5})
-); 
 //generate SDRAM controller clock
 sdram_pll sdram_pll_m0(
 	.inclk0                     (clk                     ),
@@ -245,6 +192,7 @@ sdram_core sdram_core_m0
 	.sdram_addr                 (sdram_addr               ),
 	.sdram_dq                   (sdram_dq                 )
 );
+
 
 
 endmodule
