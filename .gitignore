@@ -1,1 +1,1 @@
-*.bak  #ignore .bak files
+**/*.bak  #ignore .bak files
