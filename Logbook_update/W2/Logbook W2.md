@@ -160,4 +160,4 @@ S_WAIT-->id((S_IDLE));
 
 Number '09' is stored in the device address of EEPROM and it can be read from I2C bus, then display this number on digital display.
 
-### SignalTap II Logic Analyzer
+### 3. SignalTap II Logic Analyzer
