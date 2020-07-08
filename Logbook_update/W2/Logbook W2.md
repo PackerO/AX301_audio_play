@@ -86,4 +86,78 @@ If the receiver is the master, after it receives the last byte, it sends an NACK
 
 #### 2.2 Program Design
 
+##### Schematic of EEPROM
+
+![schematic](schematic.png)
+
+FPGA chip connects EEPROM 24LC04 through I2C bus, and the two buses of I2C pull up a 4.7K resistor to 3.3V, so when there is no output on the bus, it will be pulled up. Since A0~A2 are low on the circuit, the device address of 24LC04 is 0xA0.
+
+##### State Machine
+
+top module state machine definition:
+
+```
+localparam S_IDLE             =  0;             // Idle state, waiting for read and write
+localparam S_WR_DEV_ADDR      =  1;             // Write device address
+localparam S_WR_REG_ADDR      =  2;             // Write register address 
+localparam S_WR_DATA          =  3;             // Write register data
+localparam S_WR_ACK           =  4;             // Write request response
+localparam S_WR_ERR_NACK      =  5;             // Write error, I2C device is not responding
+localparam S_RD_DEV_ADDR0     =  6;             // I2C read state, first writes the device address and the register address
+localparam S_RD_REG_ADDR      =  7;             // I2C read state, read register address (8bit)
+localparam S_RD_DEV_ADDR1     =  8;             // Write the device address again
+localparam S_RD_DATA          =  9;             // Read data
+localparam S_RD_STOP          = 10;  
+localparam S_WR_STOP          = 11; 
+localparam S_WAIT             = 12; 
+localparam S_WR_REG_ADDR1     = 13; 
+localparam S_RD_REG_ADDR1     = 14; 
+localparam S_RD_ACK           = 15; 
+```
+
+```mermaid
+graph TD;
+id((S_IDLE))-->id((S_IDLE));
+id((S_IDLE))-->S_WR_DEV_ADDR;
+S_WR_DEV_ADDR-->S_WR_DEV_ADDR;
+id((S_IDLE))-->S_RD_DEV_ADDR0;
+S_RD_DEV_ADDR0-->S_RD_DEV_ADDR0;
+S_RD_DEV_ADDR0-->S_WR_ERR_NACK;
+S_WR_ERR_NACK-->S_WR_ERR_NACK;
+S_WR_DEV_ADDR-->S_WR_ERR_NACK;
+S_RD_DEV_ADDR0-->S_RD_REG_ADDR;
+S_RD_REG_ADDR-->S_RD_REG_ADDR;
+S_RD_REG_ADDR-->S_RD_REG_ADDR1;
+S_RD_REG_ADDR1-->S_RD_REG_ADDR1;
+S_RD_REG_ADDR1-->S_RD_DEV_ADDR1;
+S_RD_DEV_ADDR1-->S_RD_DEV_ADDR1;
+S_RD_REG_ADDR-->S_RD_DEV_ADDR1;
+S_WR_DEV_ADDR-->S_WR_REG_ADDR;
+S_WR_REG_ADDR-->S_WR_REG_ADDR;
+S_WR_REG_ADDR-->S_WR_REG_ADDR1;
+S_WR_REG_ADDR1-->S_WR_REG_ADDR1;
+S_WR_REG_ADDR1-->S_WR_DATA;
+S_WR_DATA-->S_WR_DATA;
+S_WR_REG_ADDR-->S_WR_DATA;
+S_RD_DEV_ADDR1-->S_RD_DATA;
+S_RD_DATA-->S_RD_DATA;
+S_WR_DATA-->S_WR_STOP;
+S_WR_STOP-->S_WR_STOP;
+S_WR_ERR_NACK-->S_WR_STOP;
+S_WR_STOP-->S_WR_ACK;
+S_RD_DATA-->S_RD_STOP;
+S_RD_STOP-->S_RD_STOP;
+S_RD_STOP-->S_RD_ACK;
+S_RD_ACK-->S_WAIT;
+S_WAIT-->id((S_IDLE));
+```
+
+
+
 #### 2.3 Experiment Result
+
+![result](result.jpg)
+
+Number '09' is stored in the device address of EEPROM and it can be read from I2C bus, then display this number on digital display.
+
+### SignalTap II Logic Analyzer
