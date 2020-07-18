@@ -256,6 +256,8 @@ The voice data input by the microphone will be stored in the SDRAM memory throug
   endmodule
   ```
 
+**TODO:** Actually default case will never happen for [3:0] bin_data. Maybe use 0-9 only.
+
 
 - Scan the signal to select needed LED digital display 
 - Result display : ![avatar](image2.png)

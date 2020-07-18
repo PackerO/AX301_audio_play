@@ -50,7 +50,7 @@ The I2C standard rate is 100kbit/s and the fast mode is 400kbit/s. It supports m
 
 - Figure 3: Read a single byte
 
-  ![1br](1br.pn
+  ![1br](1br.png)
 
 - Figure 4: Read multiple bytes
 
